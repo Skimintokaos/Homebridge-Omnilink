@@ -131,6 +131,26 @@ export class ExamplePlatformAccessory {
    * Handle "SET" requests from HomeKit
    * These are sent when the user changes the state of an accessory, for example, changing the Brightness
    */
+  let sensors: any;
+if ("Sensor" in configItem["Backyard"]) {
+    sensors = configItem["Backyard"]["Sensor"];
+} else {
+    if ("Sensor" in configItem["Backyard"]["Body-of-water"]) {
+        sensors = configItem["Backyard"]["Body-of-water"]["Sensor"];
+    } else {
+        sensors = {};
+    }
+}
+
+let hasAirSensor: boolean = false;
+if (typeof sensors === "object" && Object.keys(sensors).length !== 0) {
+    site_telem["Unit-of-Temperature"] = sensors["Units"] || "UNITS_FAHRENHEIT";
+    if (sensors["Name"] === "AirSensor") {
+        hasAirSensor = true;
+    }
+}
+
+
   async setBrightness(value: CharacteristicValue) {
     // implement your own code to set the brightness
     this.exampleStates.Brightness = value as number;
